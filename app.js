@@ -105,6 +105,13 @@
     $("tabs").innerHTML = TABS.map(t => `<button class="${S.tab === t[0] ? "on" : ""}" onclick="MTD.setTab('${t[0]}')">${t[1]}</button>`).join("");
   }
   function renderAll() { renderTop(); renderNav(); renderHero(); renderTabs(); renderPanel(); }
+  function instBar() {
+    document.body.dataset.inst = S.instrument;
+    const g = S.instrument === "guitar";
+    return `<div class="instbar"><span class="ib-lb">当前乐器轨道</span>
+      <div class="seg"><button class="${g ? "on" : ""}" onclick="MTD.setInstrument('guitar')">🎸 吉他</button><button class="${g ? "" : "on"}" onclick="MTD.setInstrument('piano')">🎹 钢琴</button></div>
+      <span class="ib-tip">Lessons, videos, song examples and scores are isolated to this track.</span></div>`;
+  }
 
   /* ---------- 讲义 ---------- */
   function panelTheory(s) {
@@ -114,11 +121,11 @@
     const quiz = s.quiz.map(q => `<div class="quiz" onclick="this.classList.toggle('show')"><div class="q">❓ ${esc(q[0])} <span style="margin-left:auto;color:var(--blue);font-size:11px">点击看答案</span></div><div class="a">✅ ${esc(q[1])}</div></div>`).join("");
     const inst = S.instrument === "guitar" ? s.guitar : s.piano;
     const instName = S.instrument === "guitar" ? "🎸 吉他" : "🎹 钢琴";
-    return `<div class="card"><h3 class="sec-h"><span class="bar"></span>知识讲解 · ${s.sections.length} 节</h3>${accs}</div>
+    return `<div class="card"><h3 class="sec-h"><span class="bar"></span>${instName} · 知识讲解 · ${s.sections.length} 节</h3>${accs}</div>
       <div class="card"><h3 class="sec-h"><span class="bar"></span>${instName} · 本关上手要点</h3>
         <div class="box" style="background:var(--blue-soft);border-color:#cfe4ff"><div style="font-size:13px;line-height:1.85">${inst.h}</div></div>
-        <div class="grid2" style="margin-top:14px"><div class="box"><h4>💡 练习提示</h4><ul>${inst.tips.map(t => `<li>${esc(t)}</li>`).join("")}</ul></div>
-        <div class="box"><h4>🎯 另一轨速览</h4><ul>${(S.instrument === "guitar" ? s.piano : s.guitar).tips.slice(0, 3).map(t => `<li>${esc(t)}</li>`).join("")}</ul><div class="muted" style="margin-top:8px">点顶部「吉他 / 钢琴」切换查看完整双轨内容</div></div></div></div>
+        <div class="box" style="margin-top:14px"><h4>💡 本轨练习提示</h4><ul>${inst.tips.map(t => `<li>${esc(t)}</li>`).join("")}</ul></div>
+        <div class="muted" style="margin-top:8px;font-size:11.5px">Only this instrument's lessons are shown here. Use the track switcher above to change instrument.</div></div>
       <div class="grid2"><div class="card"><h3 class="sec-h"><span class="bar"></span>术语表 · ${s.terms.length} 条</h3>${terms}</div>
         <div class="card"><h3 class="sec-h"><span class="bar" style="background:var(--red)"></span>新手常见误区</h3>${mistakes}</div></div>
       <div class="card"><h3 class="sec-h"><span class="bar" style="background:var(--green)"></span>自测题 · 点击展开答案</h3>${quiz}</div>`;
@@ -128,30 +135,33 @@
   let curVideo = null;
   function panelVideos(s) {
     const b = s.videos.bili, y = s.videos.yt;
-    setTimeout(() => { const f = (s.videos.yt || []).find(v => v.vid); if (f) selectYT(f.vid); else selectVideo(0); }, 0);
+    const instName = S.instrument === "guitar" ? "🎸 吉他" : "🎹 钢琴";
+    const otherName = S.instrument === "guitar" ? "钢琴" : "吉他";
+    setTimeout(() => selectVideo(0), 0);
     const bl = b.map((v, i) => `<div class="vitem ${i === 0 ? "on" : ""}" id="vb${i}" onclick="MTD.selectVideo(${i})">
         <div class="p">B站 · ${esc(v.bvid)} · P${v.page || 1}</div><div class="t">${esc(v.label)}</div><div class="n">${esc(v.note || "")}</div></div>`).join("");
     const yl = y.map(v => {
-      if (v.vid) return `<div class="vitem" onclick="MTD.selectYT('${v.vid}')"><div class="p">YouTube 主源</div><div class="t">${esc(v.label)}</div><div class="n">${esc(v.note || "")}</div></div>`;
+      if (v.vid) return `<div class="vitem" onclick="MTD.selectYT('${v.vid}')"><div class="p">YouTube 备用</div><div class="t">${esc(v.label)}</div><div class="n">${esc(v.note || "")}</div></div>`;
       if (v.search) return `<a class="vitem" style="display:block" href="https://www.youtube.com/results?search_query=${encodeURIComponent(v.search)}" target="_blank" rel="noopener"><div class="p">YouTube 搜索（新窗口）</div><div class="t">${esc(v.label)}</div><div class="n">${esc(v.note || "")}</div></a>`;
       return `<a class="vitem" style="display:block" href="${esc(v.url)}" target="_blank" rel="noopener"><div class="p">外部资源（新窗口）</div><div class="t">${esc(v.label)}</div><div class="n">${esc(v.note || "")}</div></a>`;
     }).join("");
-    const demos = s.song.demo.map(d => {
+    const demos = s.song.demo.filter(d => !(d.label || "").includes(otherName)).map(d => {
       if (d.bvid) return `<a class="btn sec sm" href="https://www.bilibili.com/video/${d.bvid}/?p=${d.page || 1}" target="_blank" rel="noopener">▶ ${esc(d.label)}</a>`;
       return `<a class="btn sec sm" href="${esc(d.url)}" target="_blank" rel="noopener">▶ ${esc(d.label)}</a>`;
     }).join("");
     const scores = s.song.scores.map(x => `<a class="btn gray sm" href="${esc(x.url)}" target="_blank" rel="noopener">📄 ${esc(x.label)}</a>`).join("");
-    return `<div class="notice">📺 <b>视频来自公开网络 · 已设为 YouTube 优先</b>：进入本页会自动播放本关 YouTube 主源，点上方任意一集即可切换；<b>手机 / iPad 会自动变成「点一下跳转原站」的大卡片</b>（iOS 会拦截内嵌播放器，跳转反而最稳）。内容完全一样，建议用 B 站或 YouTube App 打开。若内嵌黑屏也可随时点「↗ 在新窗口打开」。<b>YouTube 主源</b>用于海外网络环境。</div>
-      <div class="card"><h3 class="sec-h"><span class="bar"></span>本关教学视频 · B站中文系统课 · 兜底（${b.length} 集）</h3>
+    return `<div class="notice">📺 <b>视频来自公开网络 · 已设为 B站优先</b>：进入本页会自动播放本关 B站中文系统课第一集，点上方任意一集即可切换；<b>手机 / iPad 会自动变成「点一下跳转原站」的大卡片</b>（iOS 会拦截内嵌播放器，跳转反而最稳）。内容完全一样，建议用 B 站 App 打开。若内嵌黑屏也可随时点「↗ 在新窗口打开」。<b>YouTube 备用</b>用于海外网络环境。</div>
+      <div class="card"><h3 class="sec-h"><span class="bar"></span>本关教学视频 · B站中文系统课 · 主源（${b.length} 集）</h3>
         <div class="vlist">${bl}</div>
         <div class="vsrc"><button class="btn sm" id="openVideoBtn" onclick="MTD.openVideoNew()">↗ 在新窗口打开</button><button class="btn gray sm" onclick="MTD.selectVideo(0)">↺ 回到第一集</button><span class="muted" id="curVideoLabel"></span></div>
         <div id="playerBox" style="margin-top:10px"><div class="player-ph"><div><div class="big">▶</div>选择左侧一集开始播放</div></div></div>
       </div>
-      <div class="card"><h3 class="sec-h"><span class="bar" style="background:var(--red)"></span>YouTube 主源 · 推荐（${y.length} 个）</h3><div class="vlist">${yl}</div>
+      <div class="card"><h3 class="sec-h"><span class="bar" style="background:var(--red)"></span>YouTube 备用（${y.length} 个）</h3><div class="vlist">${yl}</div>
         <div class="muted">备用全套系统课：<a href="https://www.youtube.com/watch?v=rgaTLrZGlk0" target="_blank" rel="noopener">Andrew Huang 半小时乐理</a> · <a href="https://www.youtube.com/watch?v=QWnTVipZgT4" target="_blank" rel="noopener">Corey Lennox 完整入门课</a> · <a href="https://www.youtube.com/@nicechordwiwi" target="_blank" rel="noopener">好和弦 NiceChord（中文）</a></div></div>
       <div class="card"><h3 class="sec-h"><span class="bar" style="background:var(--green)"></span>本关通关曲 · 演奏示范与曲谱</h3>
         <div style="font-size:13.5px;font-weight:650;margin-bottom:4px">🎵 ${esc(s.song.title)}</div><div class="muted" style="margin-bottom:12px">${esc(s.song.why)}</div>
         <div class="btnrow" style="margin-bottom:12px">${demos}</div><div class="btnrow">${scores}</div>
+        <div class="box" style="margin-top:12px;background:var(--blue-soft);border-color:#cfe4ff;font-size:12.8px;line-height:1.8"><b>${instName} · 演奏要点：</b>${esc(s.song[S.instrument])}</div>
         <div class="muted" style="margin-top:10px">谱子建议打印出来放琴架上；MuseScore / IMSLP 均为免费或公共领域资源。</div></div>`;
   }
   function isMobile() {
@@ -179,9 +189,9 @@
     curVideo = { type: "yt", vid };
     const pb = $("playerBox"); if (!pb) return;
     const url = `https://www.youtube.com/watch?v=${vid}`;
-    const mob = isMobile() ? mobileCardHtml("YouTube 主源课程", "海外网络推荐 · 点开即播", url) : "";
+    const mob = isMobile() ? mobileCardHtml("YouTube 备用课程", "海外网络推荐 · 点开即播", url) : "";
     pb.innerHTML = mob + `<div class="${isMobile() ? "pc-player" : ""}"><iframe class="player" src="https://www.youtube.com/embed/${vid}" allowfullscreen frameborder="0" allow="accelerometer; encrypted-media; picture-in-picture"></iframe></div>`;
-    const lb = $("curVideoLabel"); if (lb) lb.textContent = "正在播放 YouTube 主源";
+    const lb = $("curVideoLabel"); if (lb) lb.textContent = "正在播放 YouTube 备用";
   }
   function openVideoNew() {
     if (!curVideo) return toast("请先选一集视频");
@@ -285,7 +295,7 @@
   /* ---------- AI 助教 ---------- */
   function panelAI(s) {
     const st = S.settings;
-    const modeTxt = { chat: "WorkBuddy 对话（零配置 · 推荐）", api: "浏览器直连免费 API", proxy: "本地代理转发（智谱/DeepSeek）" }[st.aiMode];
+    const modeTxt = { chat: "WorkBuddy 对话（零配置）", api: "浏览器直连免费 API", proxy: "本地代理转发（智谱/DeepSeek）" }[st.aiMode];
     return `<div class="card"><h3 class="sec-h"><span class="bar" style="background:var(--purple)"></span>AI 助教 / 评委 · 当前通道：${modeTxt}</h3>
       <div class="notice">💡 <b>先说清楚能力边界（很重要）</b>：免费大模型 API 只能读文字和图片，<b>不能「听」音频、「看」视频</b>。所以工作台的「自动出分」由本地音频引擎完成（音准/节奏/完整度/流畅度/表现力），AI 负责<b>把测量结果翻译成针对你个人的教练式点评</b>。<br>要做 Yousician 那种逐音毫秒级实时打分需要专门的音频算法服务（GitHub 上 MusicMash 用 pYIN + DTW 实现），那是另一个工程量级 —— 对 0 基础阶段，本工作台的方案够用且完全免费。</div>
       <div class="grid2"><div class="box"><h4>① 本地评分引擎（永远可用）</h4><p class="muted" style="margin:0">浏览器内跑 Web Audio + 自相关 + DTW，零配置、断网可用、无需任何 Key。上传即出五维分数与练习处方。</p></div>
@@ -407,7 +417,7 @@
   function renderPanel() {
     const s = stage();
     const map = { theory: panelTheory, videos: panelVideos, test: panelTest, ai: panelAI, notes: panelNotes };
-    $("panel").innerHTML = (map[S.tab] || panelTheory)(s);
+    $("panel").innerHTML = instBar() + (map[S.tab] || panelTheory)(s);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -730,7 +740,7 @@
       <ol>
         <li>左侧点任意一关（<b>12 关全部解锁</b>，跳着看也行）；顶部切「🎸 吉他 / 🎹 钢琴」轨道，两套讲解与成绩独立。</li>
         <li>「📖 详细讲义」看完 6 节知识讲解 + 双轨要点 + 术语 + 误区 + 自测题。</li>
-        <li>「🎬 教学视频」直接在工作台内播 B 站课程；内嵌黑屏就点「在新窗口打开」。YouTube 主源给海外网络用。</li>
+        <li>「🎬 教学视频」直接在工作台内播 B 站课程；内嵌黑屏就点「在新窗口打开」。YouTube 备用给海外网络用。</li>
         <li>「🎯 通关测试」先点「🔊 听标准示范」，照着音符序列练熟，然后上传演奏视频/音频，或点「🎤 直接录音」。</li>
         <li>工作台自动跑五维评分（音准/节奏/完整度/流畅度/表现力），出分数、星级、错误清单、练习处方，成绩自动存档。</li>
         <li>「🤖 AI 助教」把报告发给我（WorkBuddy 对话）或配免费 API 一键拿深度点评；「📊 成绩单」看雷达图、进步曲线、徽章。</li>
@@ -781,7 +791,7 @@
   window.MTD = {
     go(id) { S.current = id; S.tab = "theory"; save(); renderAll(); },
     setTab(t) { S.tab = t; save(); renderTabs(); renderPanel(); },
-    setInstrument(i) { S.instrument = i; save(); renderHero(); renderPanel(); },
+    setInstrument(i) { S.instrument = i; save(); renderAll(); },
     selectVideo, selectYT, openVideoNew, playDemo, stopDemo,
     onFile, onDrop, reAnalyse, saveNote, buildPrompt, copyPrompt, copyReport, quickAsk, aiReview,
     closeAll, openTools, openReport, openSettings, openHelp,
