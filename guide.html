@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>手机 / iPad 打开乐理通关工作台</title>
+<style>
+  :root{--bg:#f5f5f7;--card:#fff;--ink:#1d1d1f;--ink2:#515154;--ink3:#86868b;--line:#e8e8ed;--blue:#007aff;--blue-soft:#eaf3ff;--r:18px;--sh:0 2px 14px rgba(0,0,0,.055),0 1px 3px rgba(0,0,0,.03);--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","PingFang SC","Microsoft YaHei",sans-serif}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.7;-webkit-font-smoothing:antialiased;padding:24px 16px 60px}
+  .wrap{max-width:760px;margin:0 auto}
+  .hero{background:linear-gradient(135deg,#fff,#f2f8ff);border:1px solid #e2edfb;border-radius:var(--r);padding:26px 28px;box-shadow:var(--sh);margin-bottom:16px}
+  .hero h1{font-size:23px;margin:0 0 6px;letter-spacing:-.3px}
+  .hero .sub{color:var(--ink2);font-size:13.5px;margin-bottom:16px}
+  .urlbox{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:13px;padding:12px 14px;margin-bottom:14px}
+  .urlbox a{font-size:15px;font-weight:650;color:var(--blue);word-break:break-all;text-decoration:none}
+  .urlbox button{border:1px solid #cfe4ff;background:var(--blue-soft);color:var(--blue);border-radius:10px;padding:8px 14px;font-size:12.5px;font-weight:650;cursor:pointer}
+  .qrrow{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+  .qrrow img{width:186px;height:186px;border-radius:14px;border:1px solid var(--line);background:#fff;padding:8px;box-shadow:var(--sh)}
+  .qrrow .tip{flex:1;min-width:220px}
+  .qrrow .tip b{display:block;font-size:15px;margin-bottom:6px}
+  .qrrow .tip span{color:var(--ink2);font-size:12.8px}
+  .card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:20px 22px;margin-bottom:16px}
+  .card h2{font-size:16px;margin:0 0 14px;display:flex;align-items:center;gap:9px}
+  .card h2 .n{width:24px;height:24px;border-radius:8px;background:var(--blue-soft);color:var(--blue);display:grid;place-items:center;font-size:12px;font-weight:700;flex-shrink:0}
+  .steps{margin:0;padding-left:20px}
+  .steps li{margin-bottom:9px;color:var(--ink2);font-size:13.2px}
+  .steps li b{color:var(--ink)}
+  .kbd{background:#f0f0f5;border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-size:11.5px;font-family:ui-monospace,Consolas,monospace}
+  .note{background:#fff8e8;border:1px solid #ffe4a3;border-radius:12px;padding:12px 15px;font-size:12.8px;color:#8a6100;line-height:1.65;margin-top:12px}
+  .note b{color:#6b4a00}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:620px){.grid{grid-template-columns:1fr}.hero{padding:20px}.card{padding:18px}}
+  .mini{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 15px}
+  .mini h4{font-size:13px;margin:0 0 7px}
+  .mini p{font-size:12.4px;color:var(--ink2);margin:0}
+  .ok{color:#1e9e48;font-weight:700}
+  .foot{text-align:center;color:var(--ink3);font-size:11.5px;margin-top:22px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <h1>📱 手机 / iPad 随时打开乐理工作台</h1>
+    <div class="sub">已经部署到 GitHub Pages，不用开电脑、不用装 App，用浏览器打开网址即可。iOS 建议「添加到主屏幕」，就能像 App 一样全屏使用。</div>
+    <div class="urlbox">
+      <a id="url" href="https://agu223.github.io/music-theory-dojo/" target="_blank" rel="noopener">https://agu223.github.io/music-theory-dojo/</a>
+      <button onclick="cp()">📋 复制网址</button>
+      <button onclick="window.open(document.getElementById('url').href,'_blank')">↗ 在浏览器打开</button>
+    </div>
+    <div class="qrrow">
+      <img src="qr.png" alt="扫码打开网址的二维码">
+      <div class="tip">
+        <b>用手机 / iPad 相机扫一下 ↑</b>
+        <span>iPhone / iPad：打开「相机」对准二维码 → 点顶部弹出的链接；<br>安卓：用相机或浏览器的「扫一扫」。<br>扫码后直接用 Safari / Chrome 打开即可，<b>不用连电脑、不用同一 WiFi</b>。</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">1</span>添加到主屏幕（iPad 强烈建议，像 App 一样全屏）</h2>
+    <ol class="steps">
+      <li><b>iPhone / iPad（Safari）</b>：打开上面的网址 → 点底部中间的「分享」按钮 <span class="kbd">⬆️ 方框</span> → 下滑选「<b>添加到主屏幕</b>」→ 命名「乐理道场」→ 点「添加」。</li>
+      <li><b>安卓（Chrome）</b>：打开网址 → 右上角「⋮」→「添加到主屏幕 / 安装应用」。</li>
+      <li>之后从桌面图标启动：<b>全屏、无地址栏、有独立图标</b>，跟原生 App 一样。工作台已内置 PWA 清单与图标。</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">2</span>手机上哪些功能能用</h2>
+    <div class="grid">
+      <div class="mini"><h4 class="ok">✅ 完整可用</h4><p>12 关讲义、术语表、自测题、B站主源视频（YouTube 备用）（点一下跳原站，iOS 最稳）、通关曲示范、曲谱链接、吉他/钢琴轨道切换（互不干扰）、节拍器、虚拟钢琴、指板图、练耳游戏、成绩单/徽章/雷达图。</p></div>
+      <div class="mini"><h4 class="ok">✅ 反而更好用</h4><p>「直接录音」和「调音器」需要麦克风，iOS 只在 <b>https 网址</b>下授权麦克风。线上是 https，所以 iPad 上录音打分、调音都能用；本地 file:// 反而会被拦。</p></div>
+      <div class="mini"><h4 class="ok">✅ 自动出分不花钱</h4><p>五维评分引擎完全在浏览器里跑，<b>不联网、不买 token、不依赖电脑</b>，上传演奏音频/视频或点「直接录音」即出分。</p></div>
+      <div class="mini"><h4>⚠️ 需要电脑时再说</h4><p>AI 深度点评若要走本地代理（<span class="kbd">启动AI代理.bat</span>），那个代理跑在电脑上。手机上请改用「复制报告 → 发到 WorkBuddy 对话」这条零成本路径，效果一样。</p></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">3</span>务必知道：成绩各设备独立（你选了「暂不自动同步」）</h2>
+    <p style="color:var(--ink2);font-size:13px;margin:0 0 10px">成绩存在<b>各自浏览器</b>里，电脑、手机、iPad 以及「本地打开」与「线上打开」互不互通。要合并时用工作台自带的备份功能即可，零成本：</p>
+    <ol class="steps">
+      <li>在<b>有成绩的设备</b>：右上「📊 成绩单」→「<b>导出备份</b>」→ 得到一个 JSON 文件（可微信/邮件发给自己）。</li>
+      <li>在<b>目标设备</b>：打开同一网址 →「📊 成绩单」→「<b>导入</b>」→ 选那个文件，成绩就搬过来了。</li>
+      <li>建议固定用<b>一个设备</b>（比如 iPad）作为主学习机，成绩都记在它上面，最省心。</li>
+    </ol>
+    <div class="note"><b>关于以后更新：</b>网址是固定不变的。以后我改了内容，重新推送一次即可，你手机上的网址/主屏幕图标<b>不用动</b>，刷新就是最新版。仓库是公开的（<span class="kbd">agu223/music-theory-dojo</span>），内容只有乐理讲义与公开视频链接，无个人隐私。</div>
+  </div>
+
+  <div class="foot">乐理通关工作台 · GitHub Pages · HTTPS 强制 · 海外（匈牙利）访问友好</div>
+</div>
+<script>
+function cp(){
+  var t="https://agu223.github.io/music-theory-dojo/";
+  var ta=document.createElement("textarea");
+  ta.value=t; ta.style.position="fixed"; ta.style.opacity="0";
+  document.body.appendChild(ta); ta.select();
+  try{document.execCommand("copy"); alert("\u590d\u5236\u6210\u529f\uff1a"+t);}
+  catch(e){prompt("\u8bf7\u624b\u52a8\u590d\u5236\u7f51\u5740",t);}
+  document.body.removeChild(ta);
+}
+</script>
+</body>
+</html>
