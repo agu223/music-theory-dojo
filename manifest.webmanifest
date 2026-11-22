@@ -1,0 +1,16 @@
+{
+  "name": "乐理通关工作台 · 零基础到完整演奏",
+  "short_name": "乐理道场",
+  "description": "12 关游戏化乐理学习：讲义、教学视频、通关曲、AI 评分与练琴工具箱",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f5f5f7",
+  "theme_color": "#f5f5f7",
+  "lang": "zh-CN",
+  "icons": [
+    { "src": "icon.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
